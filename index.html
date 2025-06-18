@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disruptor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Timer View -->
+    <section id="timer-view" class="view active">
+
+      <!-- Time Picker (Vertical Layout) -->
+      <div class="time-display">
+        <button id="hours-input" class="time-box">HH</button>
+        <span class="time-separator">:</span>
+        <button id="minutes-input" class="time-box">MM</button>
+        <span class="time-separator">:</span>
+        <button id="seconds-input" class="time-box">SS</button>
+      </div>
+
+      <!-- Play Button -->
+      <div class="play-pause-container">
+        <button class="play-button" id="playPauseBtn">
+          <img src="assets//icons/play.svg" alt="Play" id="playIcon" />
+        </button>
+      </div>
+
+      <!-- Bottom Section: Tab Bar + Toggle -->
+      <div class="bottom-bar">
+
+        <button class="tab-button" id="open-timer">
+          <div class="icon-circle"><img src="assets/icons/timer.svg" alt="Timer" /></div>
+        </button>
+
+        <div class="dark-mode-container">
+          <span>Dark Mode</span>
+          <div class="dark-mode-toggle">
+            <div class="toggle-switch" id="darkToggle"></div>
+          </div>
+        </div>
+
+        <button class="tab-button" id="open-settings">
+          <div class="icon-circle"><img src="assets/icons/gear.svg" alt="Settings" /></div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Settings View -->
+    <section id="settings-view" class="settings-panel">
+      <h2>Volume</h2>
+      <input type="range" min="0" max="100" value="50" id="volume-slider" class="volume-slider" />
+
+      <h2>Sound</h2>
+      <div class="stepper-container">
+        <label>Max. Interval</label>
+        <div class="stepper">
+          <button class="step-down">-</button>
+          <input type="text" class="step-value" value="30" readonly />
+          <button class="step-up">+</button>
+        </div>
+      </div>
+
+      <div class="stepper-container">
+        <label>Max. Duration</label>
+        <div class="stepper">
+          <button class="step-down">-</button>
+          <input type="text" class="step-value" value="10" readonly />
+          <button class="step-up">+</button>
+        </div>
+      </div>
+
+      <h2>Pitch</h2>
+      <div class="stepper-container">
+        <label>Max. Pitch</label>
+        <div class="stepper">
+          <button class="step-down">-</button>
+          <input type="text" class="step-value" value="800" readonly />
+          <button class="step-up">+</button>
+        </div>
+      </div>
+
+      <div class="stepper-container">
+        <label>Min. Pitch</label>
+        <div class="stepper">
+          <button class="step-down">-</button>
+          <input type="text" class="step-value" value="200" readonly />
+          <button class="step-up">+</button>
+        </div>
+      </div>
+
+      <button id="close-settings" class="close-settings-button">Close</button>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

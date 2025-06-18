@@ -1,0 +1,281 @@
+/* ======= Root Variables ======= */
+:root {
+  --primary-light: #6841F6;
+  --primary-dark: #3C268D;
+  --secondary-light: #D06BFF;
+  --secondary-dark: #6F3888;
+  --tertiary-light: #FDE9FF;
+  --tertiary-dark: #1B171A;
+  --text-color-light: #000000;
+  --text-color-dark: #ffffff;
+  --switch-on: #34C759;
+  --switch-off: #CCCCCC;
+}
+
+/* ======= General Reset ======= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'SF Pro', sans-serif;
+  background-color: var(--tertiary-light);
+  color: var(--text-color-light);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background-color: var(--tertiary-dark);
+  color: var(--text-color-dark);
+}
+
+/* ======= App Container ======= */
+.app-container {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--tertiary-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  transition: background-color 0.3s ease;
+}
+
+body.dark .app-container {
+  background-color: var(--tertiary-dark);
+}
+
+/* ======= Time Picker ======= */
+.time-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  width: 100%;
+  gap: 30px;
+  
+}
+
+
+.time-box {
+  width: 140px;
+  height: 140px;
+  font-family: 'SF Pro Rounded', 'SF Pro', sans-serif;
+  font-weight: 100; 
+  font-size: 96px;
+  border-radius: 27px;
+  background: rgba(255, 255, 255, 0.29);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+} 
+
+
+.time-separator {
+  display: none;
+}
+
+
+body.dark .time-box {
+  background: rgba(108, 79, 157, 0.2); /* dark variant with opacity */
+  color: var(--text-color-dark);
+}
+
+/* ======= Play Button ======= */
+.play-pause-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.play-button {
+  width: 50px;
+  height: 50px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.play-button img {
+  width: 100%;
+  height: 100%;
+}
+
+/* ======= Dark Mode Toggle ======= */
+.dark-mode-toggle {
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  background-color: var(--switch-off);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+body.dark .dark-mode-toggle {
+  background-color: var(--switch-on);
+}
+
+.toggle-switch {
+  width: 27px;
+  height: 27px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s ease;
+}
+
+body.dark .toggle-switch {
+  left: 22px;
+}
+
+/* ======= Bottom Bar ======= */
+.bottom-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 0 24px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  background-color: var(--secondary-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+body.dark .icon-circle {
+  background-color: var(--secondary-dark);
+}
+
+.icon-circle img {
+  width: 36px;
+  height: 36px;
+  filter: none;
+  transition: filter 0.3s ease;
+}
+
+body.dark .icon-circle img {
+  filter: brightness(0) invert(1);
+}
+
+/* ======= Settings Panel ======= */
+#settings-view {
+  position: absolute;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--tertiary-light);
+  transition: right 0.4s ease, background-color 0.3s ease;
+  padding: 20px;
+  overflow-y: auto;
+  color: var(--text-color-light);
+}
+
+body.dark #settings-view {
+  background-color: var(--tertiary-dark);
+  color: var(--text-color-dark);
+}
+
+#settings-view.active {
+  right: 0;
+}
+
+.settings-panel h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+input[type=range] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.stepper-group {
+  margin-top: 16px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stepper span {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.step-up, .step-down {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background-color: var(--primary-light);
+  color: white;
+  font-size: 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.step-up:hover, .step-down:hover {
+  background-color: var(--primary-dark);
+}
+
+.close-settings-button {
+  margin-top: 30px;
+  padding: 12px 24px;
+  background-color: var(--primary-dark);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-settings-button:hover {
+  background-color: var(--primary-light);
+}
+
+/* ======= Responsive Fixes ======= */
+@media screen and (max-height: 700px) {
+  .bottom-bar {
+    position: static;
+    margin-top: 20px;
+  }
+}
