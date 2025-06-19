@@ -10,6 +10,9 @@
   --text-color-dark: #ffffff;
   --switch-on: #34C759;
   --switch-off: #CCCCCC;
+  --fade-light: linear-gradient(to bottom, rgba(255, 255, 255, 0.6), transparent);
+  --fade-dark: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent);
+  --selector-border: rgba(255, 255, 255, 0.2);
 }
 
 /* ======= General Reset ======= */
@@ -29,11 +32,20 @@ body {
   justify-content: center;
   align-items: center;
   transition: background-color 0.3s ease, color 0.3s ease;
+  --fade-top: var(--fade-light);
+  --fade-bottom: var(--fade-light);
+}
+
+body:not(.dark) {
+  --fade-top: var(--fade-light);
+  --fade-bottom: var(--fade-light);
 }
 
 body.dark {
   background-color: var(--tertiary-dark);
   color: var(--text-color-dark);
+  --fade-top: var(--fade-dark);
+  --fade-bottom: var(--fade-dark);
 }
 
 /* ======= App Container ======= */
@@ -67,22 +79,30 @@ body.dark .app-container {
   
 }
 
-
-.time-box {
+ .time-box {
   width: 140px;
   height: 140px;
-  font-family: 'SF Pro Rounded', 'SF Pro', sans-serif;
-  font-weight: 100; 
-  font-size: 96px;
   border-radius: 27px;
-  background: rgba(255, 255, 255, 0.29);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  font-family: 'SF Pro Rounded', sans-serif;
+  font-weight: 100;
+  font-size: 72px;
+  background: rgba(255, 255, 255, 0.1); /* semi-transparent */
+  backdrop-filter: blur(20px); /* frosted glass effect */
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3); /* subtle border */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  color: var(--text-color-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-primary);
-} 
+  transition: all 0.3s ease;
+}
 
+body.dark .time-box{
+  background: rgba(255,255,255, 0.05); /* dark variant with opacity */
+  color: var(--text-color-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1); /* subtle border */
+}
 
 .time-separator {
   display: none;
@@ -279,3 +299,140 @@ input[type=range] {
     margin-top: 20px;
   }
 }
+
+/* Overlay container */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* Hide by default */
+.overlay.hidden {
+  display: none;
+}
+
+/* Picker Header */
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  width: 240px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px 12px 0 0;
+  color: var(--text-color);
+  font-family: 'SF Pro', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.picker-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.picker-header button {
+  padding: 8px 16px;
+  background-color: var(--primary-light);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+#picker-done {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Carousel list */
+/* Wrapper around the scrollable list to apply fading overlays */
+.picker-scroll-wrapper {
+  position: relative;
+  width: 160px;
+  height: 300px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: calc(50% - 36px); /* Half of item height */
+  scrollbar-width: none; /* Firefox */
+}
+
+.picker-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Scrollable vertical list of numbers */
+.picker-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 0;
+}
+
+
+/* Each number item in the carousel */
+.picker-carousel div {
+  height: 96px;
+  line-height: 96px;
+  font-size: 72px;
+  font-weight: 100;
+  font-family: 'SF Pro Rounded', sans-serif;
+  scroll-snap-align: center;
+  user-select: none;
+  color: var(--text-color);
+}
+
+#picker-list > div {
+  height: 72px;
+  font-size: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'SF Pro Rounded', sans-serif;
+  font-weight: 200;
+  scroll-snap-align: start;
+}
+
+
+.picker-carousel div:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+}
+
+.picker-carousel div:active {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* Fades */
+.fade-top,
+.fade-bottom {
+  position: absolute;
+  width: 160px;
+  height: 60px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fade-top {
+  top: 68px;
+  background: var(--fade-top);
+}
+
+.fade-bottom {
+  bottom: 0;
+  background: var(--fade-bottom);
+}
+
