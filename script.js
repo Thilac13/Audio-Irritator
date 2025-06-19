@@ -5,20 +5,50 @@ const darkToggle = document.getElementById('darkToggle');
 const playPauseBtn = document.getElementById('playPauseBtn');
 const playIcon = document.getElementById('playIcon');
 
-const timerTabBtn = document.querySelector('button.tab-button:nth-child(1)');  // timer tab button
-const settingsTabBtn = document.querySelector('button.tab-button:nth-child(3)'); // settings tab button
+const timerTabBtn = document.querySelector('button.tab-button:nth-child(1)');
+const settingsTabBtn = document.querySelector('button.tab-button:nth-child(3)');
+
 
 const timerView = document.getElementById('timer-view');
 const settingsView = document.getElementById('settings-view');
-
 const closeSettingsBtn = document.getElementById('close-settings');
 
-let isPlaying = false;
+const pickerOverlay = document.getElementById('time-picker-overlay');
+const pickerTitle = document.getElementById('picker-title');
+const pickerList = document.getElementById('picker-list');
+const pickerDoneBtn = document.getElementById('picker-done');
 
-// Update play/pause icon based on play state and dark mode
+const volumeSlider = document.getElementById('volume-slider');
+const volumeLabel = document.getElementById('volume-label');
+
+let isPlaying = false;
+let countdownInterval = null;
+let remainingSeconds = 0;
+let currentField = null;
+
+// Default Settings
+let maxInterval = 10000;  // ms
+let maxDuration = 500;    // ms
+let minPitch = 600;       // Hz
+let maxPitch = 1800;      // Hz
+let volume = 0.5;
+
+let audioCtx = null;
+
+function ensureAudioContext() {
+  if (!audioCtx || audioCtx.state === 'closed') {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+
+
+// Update play/pause icon
 function updatePlayPauseIcon() {
   const isDark = body.classList.contains('dark');
-
   if (isPlaying) {
     playIcon.src = isDark ? 'assets/icons/pause-dark.svg' : 'assets/icons/pause.svg';
     playIcon.alt = 'Pause Icon';
@@ -28,21 +58,13 @@ function updatePlayPauseIcon() {
   }
 }
 
-// Dark mode toggle handler
+// Dark mode toggle
 darkToggle.addEventListener('click', () => {
   body.classList.toggle('dark');
   updatePlayPauseIcon();
 });
 
-// Play/pause button handler
-playPauseBtn.addEventListener('click', () => {
-  isPlaying = !isPlaying;
-  updatePlayPauseIcon();
-
-  // TODO: Add timer start/pause logic here
-});
-
-// Timer tab button click: show timer, hide settings
+// Timer tab
 timerTabBtn.addEventListener('click', () => {
   timerView.classList.add('active');
   timerView.classList.remove('hidden');
@@ -50,7 +72,7 @@ timerTabBtn.addEventListener('click', () => {
   settingsView.classList.add('hidden');
 });
 
-// Settings tab button click: show settings, hide timer
+// Settings tab
 settingsTabBtn.addEventListener('click', () => {
   settingsView.classList.add('active');
   settingsView.classList.remove('hidden');
@@ -58,7 +80,7 @@ settingsTabBtn.addEventListener('click', () => {
   timerView.classList.add('hidden');
 });
 
-// Close settings button hides settings, shows timer
+// Close settings
 closeSettingsBtn.addEventListener('click', () => {
   settingsView.classList.remove('active');
   settingsView.classList.add('hidden');
@@ -66,27 +88,265 @@ closeSettingsBtn.addEventListener('click', () => {
   timerView.classList.remove('hidden');
 });
 
-// Placeholder: add event listeners for stepper buttons and volume slider here
-// Example: log the button pressed
+// Volume Live Update
+volumeSlider.addEventListener('input', (e) => {
+  volume = parseInt(e.target.value) / 100;
+  volumeLabel.textContent = `${e.target.value}%`;
+});
+
+
+// Stepper buttons (placeholder)
 document.querySelectorAll('.step-up').forEach(btn => {
   btn.addEventListener('click', () => {
     console.log('Step up clicked');
-    // TODO: implement increment logic
   });
 });
-
 document.querySelectorAll('.step-down').forEach(btn => {
   btn.addEventListener('click', () => {
     console.log('Step down clicked');
-    // TODO: implement decrement logic
   });
 });
 
-const volumeSlider = document.getElementById('volume-slider');
-volumeSlider.addEventListener('input', (e) => {
-  console.log('Volume set to', e.target.value);
-  // TODO: implement volume control logic
+// Picker logic
+function openTimePicker(fieldId, label, max = 59) {
+  currentField = document.getElementById(fieldId);
+  pickerTitle.textContent = `Select ${label}`;
+  pickerList.innerHTML = '';
+  for (let i = 0; i <= max; i++) {
+    const item = document.createElement('div');
+    item.textContent = i.toString().padStart(2, '0');
+    item.addEventListener('click', () => {
+      currentField.textContent = item.textContent;
+      closeTimePicker();
+    });
+    pickerList.appendChild(item);
+  }
+  pickerOverlay.classList.remove('hidden');
+}
+function closeTimePicker() {
+  pickerOverlay.classList.add('hidden');
+}
+document.getElementById('hours-input').addEventListener('click', () => {
+  openTimePicker('hours-input', 'Hours', 23);
+});
+document.getElementById('minutes-input').addEventListener('click', () => {
+  openTimePicker('minutes-input', 'Minutes', 59);
+});
+document.getElementById('seconds-input').addEventListener('click', () => {
+  openTimePicker('seconds-input', 'Seconds', 59);
+});
+pickerDoneBtn.addEventListener('click', closeTimePicker);
+
+// Auto-snap scroll to nearest item
+let scrollTimeout;
+
+// Auto-snap to nearest item (72px tall)
+document.querySelector('.picker-scroll-wrapper').addEventListener('scroll', function () {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const container = this;
+    const scrollTop = container.scrollTop;
+    const itemHeight = 72; // Adjusted
+    const nearestIndex = Math.round(scrollTop / itemHeight);
+    const targetScrollTop = nearestIndex * itemHeight;
+
+    container.scrollTo({
+      top: targetScrollTop,
+      behavior: 'smooth'
+    });
+  }, 100);
 });
 
-// Initialize icon on page load
+
+// Beep sound
+function playBeep() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1000, ctx.currentTime); // 1000 Hz beep
+  gain.gain.setValueAtTime(0.8, ctx.currentTime);     // Low volume
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.3); // Short beep
+}
+
+function playRandomBeep(duration = 500) {
+  try {
+    ensureAudioContext();
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    const pitch = Math.random() * (maxPitch - minPitch) + minPitch;
+    const liveVolume = parseInt(volumeSlider.value) / 100;
+
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+    gain.gain.setValueAtTime(liveVolume, audioCtx.currentTime);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration / 1000);
+  } catch (e) {
+    console.warn("Beep error", e);
+  }
+}
+
+
+
+
+
+let soundLoopActive = false;
+
+function startSoundLoop() {
+  soundLoopActive = true;
+
+  const loop = () => {
+    if (!isPlaying || !soundLoopActive || remainingSeconds <= 0) return;
+
+    const duration = Math.random() * (maxDuration * 500) + (maxDuration * 500); // in ms
+    playRandomBeep(duration); // pass duration to beep
+
+    const interval = Math.random() * (maxInterval * 0.5) + (maxInterval * 0.5); // in ms
+    const nextCycleDelay = interval + duration;
+
+    setTimeout(loop, nextCycleDelay);
+  };
+
+  loop();
+}
+
+
+function stopSoundLoop() {
+  soundLoopActive = false;
+}
+
+
+// Time utils
+function getTimeInSeconds() {
+  const h = parseInt(document.getElementById('hours-input').textContent) || 0;
+  const m = parseInt(document.getElementById('minutes-input').textContent) || 0;
+  const s = parseInt(document.getElementById('seconds-input').textContent) || 0;
+  return h * 3600 + m * 60 + s;
+}
+
+function updateDisplay(secondsLeft) {
+  const h = Math.floor(secondsLeft / 3600);
+  const m = Math.floor((secondsLeft % 3600) / 60);
+  const s = secondsLeft % 60;
+  document.getElementById('hours-input').textContent = h.toString().padStart(2, '0');
+  document.getElementById('minutes-input').textContent = m.toString().padStart(2, '0');
+  document.getElementById('seconds-input').textContent = s.toString().padStart(2, '0');
+}
+
+// Countdown
+function startCountdown() {
+  remainingSeconds = getTimeInSeconds();
+  if (remainingSeconds <= 0) return;
+
+  updateSoundSettingsFromUI();
+  startSoundLoop();
+
+  countdownInterval = setInterval(() => {
+    if (remainingSeconds > 0) {
+      remainingSeconds--;
+      updateDisplay(remainingSeconds);
+    } else {
+      clearInterval(countdownInterval);
+      stopSoundLoop();
+      isPlaying = false;
+      updatePlayPauseIcon();
+      console.log("Timer done");
+    }
+  }, 1000);
+}
+
+function pauseCountdown() {
+  clearInterval(countdownInterval);
+  stopSoundLoop();
+}
+
+
+// Play / Pause Toggle
+playPauseBtn.addEventListener('click', () => {
+  isPlaying = !isPlaying;
+  updatePlayPauseIcon();
+  if (isPlaying) {
+    startCountdown();
+  } else {
+    pauseCountdown();
+  }
+});
+
+
+// Initial icon setup
 updatePlayPauseIcon();
+
+function updateSoundSettingsFromUI() {
+  maxInterval = parseInt(document.getElementById('max-interval-value').textContent) * 1000; // to ms
+  maxDuration = parseInt(document.getElementById('max-duration-value').textContent);
+  maxPitch = parseInt(document.getElementById('max-pitch-value').textContent);
+  minPitch = parseInt(document.getElementById('min-pitch-value').textContent);
+}
+
+console.log({ volume, maxInterval, maxDuration, minPitch, maxPitch });
+
+// Stepper Controls
+function setupStepper(id, min, max) {
+  const container = document.getElementById(id);
+  const down = container.querySelector('.step-down');
+  const up = container.querySelector('.step-up');
+  const value = container.querySelector('.step-value');
+
+  down.addEventListener('click', () => {
+    let v = parseInt(value.textContent);
+    if (v > min) v--;
+    value.textContent = v;
+  });
+
+  up.addEventListener('click', () => {
+    let v = parseInt(value.textContent);
+    if (v < max) v++;
+    value.textContent = v;
+  });
+}
+
+setupStepper('max-interval-group', 5, 120);   // in seconds
+setupStepper('max-duration-group', 5, 20);    // in seconds
+setupStepper('max-pitch-group', 800, 1800);   // Hz
+setupStepper('min-pitch-group', 100, 800);    // Hz
+
+const resetBtn = document.getElementById('reset-button');
+
+resetBtn.addEventListener('click', () => {
+  // Stop everything
+  isPlaying = false;
+  updatePlayPauseIcon();
+  pauseCountdown();
+  stopSoundLoop();
+
+  // Reset time
+  document.getElementById('hours-input').textContent = '00';
+  document.getElementById('minutes-input').textContent = '00';
+  document.getElementById('seconds-input').textContent = '00';
+
+  // Reset settings to default
+  volumeSlider.value = 70;
+  volumeLabel.textContent = '70%';
+  volume = 0.7;
+
+  document.querySelector('#max-interval-group .step-value').textContent = '15';
+  document.querySelector('#max-duration-group .step-value').textContent = '5';
+
+  document.querySelector('#max-pitch-group .step-value').textContent = '1500'; // Recommended
+  document.querySelector('#min-pitch-group .step-value').textContent = '400';  // Recommended
+
+  console.log("Timer and settings reset to default.");
+});
