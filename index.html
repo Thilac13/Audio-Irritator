@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Disruptor</title>
+  <title>Audio Irritator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="dark">
   <div class="app-container">
 
     <!-- Timer View -->
@@ -14,11 +14,9 @@
 
       <!-- Time Picker (Vertical Layout) -->
       <div class="time-display">
-        <button id="hours-input" class="time-box">HH</button>
-        <span class="time-separator">:</span>
-        <button id="minutes-input" class="time-box">MM</button>
-        <span class="time-separator">:</span>
-        <button id="seconds-input" class="time-box">SS</button>
+        <button id="hours-input" class="time-box">00</button>
+        <button id="minutes-input" class="time-box">00</button>
+        <button id="seconds-input" class="time-box">00</button>
       </div>
 
       <!-- Play Button -->
@@ -31,8 +29,8 @@
       <!-- Bottom Section: Tab Bar + Toggle -->
       <div class="bottom-bar">
 
-        <button class="tab-button" id="open-timer">
-          <div class="icon-circle"><img src="assets/icons/timer.svg" alt="Timer" /></div>
+        <button class="tab-button" id="reset-button" title="Reset Timer">
+          <div class="icon-circle"><img src="assets/icons/timer.svg" alt="Reset Timer" /></div>
         </button>
 
         <div class="dark-mode-container">
@@ -52,48 +50,72 @@
     <!-- Settings View -->
     <section id="settings-view" class="settings-panel">
       <h2>Volume</h2>
-      <input type="range" min="0" max="100" value="50" id="volume-slider" class="volume-slider" />
+      <div class="volume-control">
+        <input type="range" min="0" max="100" value="50" id="volume-slider" />
+        <span id="volume-label">50%</span>
+      </div>
 
       <h2>Sound</h2>
-      <div class="stepper-container">
-        <label>Max. Interval</label>
+      <div class="stepper-group" id="max-interval-group">
+        <label>Max. Interval (s)</label>
         <div class="stepper">
           <button class="step-down">-</button>
-          <input type="text" class="step-value" value="30" readonly />
+          <span class="step-value" id="max-interval-value">10</span>
           <button class="step-up">+</button>
         </div>
       </div>
 
-      <div class="stepper-container">
-        <label>Max. Duration</label>
+      <div class="stepper-group" id="max-duration-group">
+        <label>Max. Duration (s)</label>
         <div class="stepper">
           <button class="step-down">-</button>
-          <input type="text" class="step-value" value="10" readonly />
+          <span class="step-value" id="max-duration-value">5</span>
           <button class="step-up">+</button>
         </div>
       </div>
 
       <h2>Pitch</h2>
-      <div class="stepper-container">
-        <label>Max. Pitch</label>
+      <div class="stepper-group" id="max-pitch-group">
+        <label>Max. Pitch (Hz)</label>
         <div class="stepper">
           <button class="step-down">-</button>
-          <input type="text" class="step-value" value="800" readonly />
+          <span class="step-value" id="max-pitch-value">1200</span>
           <button class="step-up">+</button>
         </div>
       </div>
 
-      <div class="stepper-container">
-        <label>Min. Pitch</label>
+      <div class="stepper-container" id="min-pitch-group">
+        <label>Min. Pitch (Hz)</label>
         <div class="stepper">
           <button class="step-down">-</button>
-          <input type="text" class="step-value" value="200" readonly />
+          <span class="step-value" id="min-pitch-value">600</span>
           <button class="step-up">+</button>
         </div>
       </div>
 
       <button id="close-settings" class="close-settings-button">Close</button>
     </section>
+  </div>
+
+  <!-- Time Picker Carousel Overlay -->
+  <div id="time-picker-overlay" class="overlay hidden">
+    <div class="picker-header">
+      <h2 id="picker-title">Select Hours</h2>
+      <button id="picker-done">Done</button>
+    </div>
+
+    <!-- Fades for iOS look -->
+    <div class="fade-top"></div>
+
+    <div class="picker-scroll-wrapper">
+      <div class="picker-carousel" id="picker-list">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
+
+    <div class="picker-selector-overlay"></div>
+
+    <div class="fade-bottom"></div>
   </div>
 
   <script src="script.js"></script>
