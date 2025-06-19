@@ -93,11 +93,34 @@
         </div>
       </div>
 
-      <button id="close-settings" class="close-settings-button">Close</button>
+      <div class="bottom-bar">
+        <!-- Placeholder to take Reset's position -->
+        <button class="tab-button invisible">
+          <div class="icon-circle"></div>
+        </button>
+
+        <!-- Placeholder to take Dark Mode's position -->
+        <div class="dark-mode-container invisible">
+          <span>Dark Mode</span>
+          <div class="dark-mode-toggle">
+            <div class="toggle-switch"></div>
+          </div>
+        </div>
+
+        <!-- Close button matches Settings Gear position -->
+        <button id="close-settings" class="tab-button">
+          <div class="icon-circle">
+            <img src="assets/icons/close.svg" alt="Close" />
+          </div>
+        </button>
+      </div>
+      
+
     </section>
   </div>
 
   <!-- Time Picker Carousel Overlay -->
+
   <div id="time-picker-overlay" class="overlay hidden">
     <div class="picker-header">
       <h2 id="picker-title">Select Hours</h2>
@@ -105,7 +128,7 @@
     </div>
 
     <!-- Fades for iOS look -->
-    <div class="fade-top"></div>
+    <!-- <div class="fade-top"></div> -->
 
     <div class="picker-scroll-wrapper">
       <div class="picker-carousel" id="picker-list">

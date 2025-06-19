@@ -136,6 +136,17 @@ body.dark .time-box {
 }
 
 /* ======= Dark Mode Toggle ======= */
+
+.dark-mode-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: "SF Pro", sans-serif;
+  font-size: 14px;
+  height: 100%; /* Ensures it fills parent height for alignment */
+}
+
 .dark-mode-toggle {
   width: 51px;
   height: 31px;
@@ -200,8 +211,8 @@ body.dark .icon-circle {
 }
 
 .icon-circle img {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   filter: none;
   transition: filter 0.3s ease;
 }
@@ -233,11 +244,45 @@ body.dark #settings-view {
   right: 0;
 }
 
+.invisible {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
 .settings-panel h2 {
   font-size: 24px;
   font-weight: 700;
   margin-top: 20px;
 }
+/*blur in settings panel */
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  padding: 24px 16px 60px;
+  background-color: rgba(255, 255, 255, 0.6); /* light mode */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+body.dark .settings-panel {
+  background-color: rgba(30, 30, 30, 0.6); /* dark mode */
+}
+
+.settings-panel.active {
+  transform: translateX(0%);
+}
+
+
 
 input[type=range] {
   width: 100%;
@@ -253,6 +298,15 @@ input[type=range] {
   align-items: center;
   gap: 10px;
 }
+
+.stepper button {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 
 .stepper span {
   min-width: 40px;
@@ -395,16 +449,53 @@ input[type=range] {
 }
 
 #picker-list > div {
-  height: 72px;
-  font-size: 72px;
+  height: 120px;
+  width: 100%;
+  font-size: 120px;
+  font-family: 'SF Pro Rounded', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 100;
+  line-height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'SF Pro Rounded', sans-serif;
-  font-weight: 200;
+  margin: 0;
+  padding: 0;
+  letter-spacing: 0;
+  text-align: center;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
   scroll-snap-align: start;
 }
 
+#picker-list {
+  max-height: 216px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  padding: 72px 0;
+  -webkit-overflow-scrolling: touch;
+  text-align: center;
+  scroll-snap-type: y mandatory;
+  /* Hide scrollbar on all platforms */
+  scrollbar-width: none;         /* Firefox */
+  -ms-overflow-style: none;      /* IE/Edge */
+}
+
+#picker-list::-webkit-scrollbar {
+  display: none;                 /* Chrome/Safari/Opera */
+}
+
+#picker-list div {
+  height: 72px;
+  font-size: 72px;
+  font-weight: 200;
+  font-family: 'SF Pro Rounded', sans-serif;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
 
 .picker-carousel div:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -416,7 +507,7 @@ input[type=range] {
   transform: scale(1.05);
 }
 
-/* Fades */
+/* Fades 
 .fade-top,
 .fade-bottom {
   position: absolute;
@@ -435,4 +526,55 @@ input[type=range] {
   bottom: 0;
   background: var(--fade-bottom);
 }
+*/
 
+/* ====== smooth transition for the views ====== */
+.view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.view.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.view.hidden {
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes resetBounce {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  75% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.time-box.animate-reset {
+  animation: resetBounce 0.4s ease;
+}

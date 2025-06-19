@@ -60,33 +60,44 @@ function updatePlayPauseIcon() {
 
 // Dark mode toggle
 darkToggle.addEventListener('click', () => {
+  vibrate(30) 
   body.classList.toggle('dark');
   updatePlayPauseIcon();
 });
 
-// Timer tab
+//transition of tab view 
+
+function switchView(showView, hideView) {
+  hideView.classList.remove('active');
+  // Wait for CSS transition duration before hiding fully
+  setTimeout(() => {
+    hideView.classList.add('hidden');
+  }, 300); // match CSS transition duration (300ms)
+
+  showView.classList.remove('hidden');
+  // small delay to trigger transition properly
+  setTimeout(() => {
+    showView.classList.add('active');
+  }, 10);
+}
+
 timerTabBtn.addEventListener('click', () => {
-  timerView.classList.add('active');
-  timerView.classList.remove('hidden');
-  settingsView.classList.remove('active');
-  settingsView.classList.add('hidden');
+  vibrate(30)
+  switchView(timerView, settingsView);
 });
 
-// Settings tab
 settingsTabBtn.addEventListener('click', () => {
-  settingsView.classList.add('active');
-  settingsView.classList.remove('hidden');
-  timerView.classList.remove('active');
-  timerView.classList.add('hidden');
+  vibrate(30)
+  switchView(settingsView, timerView);
 });
+
 
 // Close settings
 closeSettingsBtn.addEventListener('click', () => {
-  settingsView.classList.remove('active');
-  settingsView.classList.add('hidden');
-  timerView.classList.add('active');
-  timerView.classList.remove('hidden');
+  vibrate(30)
+  switchView(timerView, settingsView);
 });
+
 
 // Volume Live Update
 volumeSlider.addEventListener('input', (e) => {
@@ -98,11 +109,13 @@ volumeSlider.addEventListener('input', (e) => {
 // Stepper buttons (placeholder)
 document.querySelectorAll('.step-up').forEach(btn => {
   btn.addEventListener('click', () => {
+    vibrate(30)
     console.log('Step up clicked');
   });
 });
 document.querySelectorAll('.step-down').forEach(btn => {
   btn.addEventListener('click', () => {
+    vibrate(30)
     console.log('Step down clicked');
   });
 });
@@ -137,9 +150,6 @@ document.getElementById('seconds-input').addEventListener('click', () => {
 });
 pickerDoneBtn.addEventListener('click', closeTimePicker);
 
-// Auto-snap scroll to nearest item
-let scrollTimeout;
-
 // Auto-snap to nearest item (72px tall)
 document.querySelector('.picker-scroll-wrapper').addEventListener('scroll', function () {
   clearTimeout(scrollTimeout);
@@ -155,6 +165,24 @@ document.querySelector('.picker-scroll-wrapper').addEventListener('scroll', func
       behavior: 'smooth'
     });
   }, 100);
+});
+
+function snapToNearestItem() {
+  const itemHeight = 72;
+  const scrollTop = pickerList.scrollTop;
+  const index = Math.round(scrollTop / itemHeight);
+  const targetScroll = index * itemHeight;
+
+  pickerList.scrollTo({
+    top: targetScroll,
+    behavior: 'smooth'
+  });
+}
+
+let scrollTimeout;
+pickerList.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(snapToNearestItem, 100);
 });
 
 
@@ -276,6 +304,7 @@ function pauseCountdown() {
 
 // Play / Pause Toggle
 playPauseBtn.addEventListener('click', () => {
+  vibrate(30)
   isPlaying = !isPlaying;
   updatePlayPauseIcon();
   if (isPlaying) {
@@ -306,12 +335,14 @@ function setupStepper(id, min, max) {
   const value = container.querySelector('.step-value');
 
   down.addEventListener('click', () => {
+    vibrate(30)
     let v = parseInt(value.textContent);
     if (v > min) v--;
     value.textContent = v;
   });
 
   up.addEventListener('click', () => {
+    vibrate(30)
     let v = parseInt(value.textContent);
     if (v < max) v++;
     value.textContent = v;
@@ -337,6 +368,13 @@ resetBtn.addEventListener('click', () => {
   document.getElementById('minutes-input').textContent = '00';
   document.getElementById('seconds-input').textContent = '00';
 
+  // Animate bounce
+['hours-input', 'minutes-input', 'seconds-input'].forEach(id => {
+  const el = document.getElementById(id);
+  el.classList.add('animate-reset');
+  setTimeout(() => el.classList.remove('animate-reset'), 400);
+});
+
   // Reset settings to default
   volumeSlider.value = 70;
   volumeLabel.textContent = '70%';
@@ -349,4 +387,61 @@ resetBtn.addEventListener('click', () => {
   document.querySelector('#min-pitch-group .step-value').textContent = '400';  // Recommended
 
   console.log("Timer and settings reset to default.");
+});
+
+//vibration 
+
+function vibrate(pattern = 50) {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(pattern);
+  }
+}
+
+let stepperInterval = null;
+let stepperDelay = 500; // initial delay
+let stepperSpeed = 100; // repeated action interval
+
+function startStepper(button, direction) {
+  const valueSpan = button.parentElement.querySelector('.step-value');
+  if (!valueSpan) return;
+
+  const updateValue = () => {
+    let value = parseInt(valueSpan.textContent, 10);
+    if (direction === 'up') value++;
+    else value = Math.max(0, value - 1); // prevent negative
+    valueSpan.textContent = value;
+  };
+
+  // Run once immediately
+  updateValue();
+
+  // Then run repeatedly
+  stepperInterval = setTimeout(function repeat() {
+    updateValue();
+    stepperInterval = setTimeout(repeat, stepperSpeed);
+  }, stepperDelay);
+}
+
+function stopStepper() {
+  clearTimeout(stepperInterval);
+  stepperInterval = null;
+}
+
+// Attach to all step-up and step-down buttons
+document.querySelectorAll('.step-up').forEach(button => {
+  button.addEventListener('mousedown', () => startStepper(button, 'up'));
+  button.addEventListener('touchstart', () => startStepper(button, 'up'));
+
+  button.addEventListener('mouseup', stopStepper);
+  button.addEventListener('mouseleave', stopStepper);
+  button.addEventListener('touchend', stopStepper);
+});
+
+document.querySelectorAll('.step-down').forEach(button => {
+  button.addEventListener('mousedown', () => startStepper(button, 'down'));
+  button.addEventListener('touchstart', () => startStepper(button, 'down'));
+
+  button.addEventListener('mouseup', stopStepper);
+  button.addEventListener('mouseleave', stopStepper);
+  button.addEventListener('touchend', stopStepper);
 });
