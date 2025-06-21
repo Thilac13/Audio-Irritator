@@ -1,19 +1,18 @@
-# 🌓 Audio Irritator
+#  Audio Irritator
 
 ![App Banner Placeholder - Dark Mode](assets/screenshots/banner-dark-placeholder.png)
 
-**A minimal, full-screen PWA timer that plays randomized audio bursts to ethically disrupt sleep or enhance alertness. Built with a native iOS aesthetic and deep customization.**
+**A minimal audio deprivator app for all your sensory deprivation plays**
 
-> ⚡ Final Release · 🌙 Dark Mode First · 📲 PWA Installable on iOS & Android
+> ⚡ Final Release · 🌙 Dark Mode First · 📲 Standalone web-app Installable on iOS & Android
 
 ---
 
 ## 🎯 Features
 
-- ⏱️ Set max interval & duration with precision
+- ⏱️ Set max interval & duration of the sound with precision
 - 🔊 Real-time volume slider & pitch control
 - 🔁 Randomized burst playback
-- 🎛️ Minimal stepper UI with long-press support
 - 📱 Installable PWA — works offline
 - 💠 Feels native on iOS and Android
 - 🌗 System theme aware (dark/light mode)
@@ -50,21 +49,18 @@ _(Best viewed in Safari or Chrome on mobile)_
 
 ---
 
-## 📸 Preview
+## 📸 App Preview
 
-> _(Here’s how the app looks when installed and running in standalone mode)_
+> Get a feel for the UI in dark and light modes
 
-![App Screenshot Preview](assets/screenshots/app-preview.png)
-
----
-
-## 🛠 Tech Stack
-
-- HTML5, CSS3, JavaScript
-- Vanilla JS (no frameworks)
-- PWA APIs (Service Worker + Manifest)
-- Designed in Figma
-- iOS-style UI/UX manually styled
+<div align="center">
+  <p>
+    <img src="assets/screenshots/timer-dark.PNG" width="240"/>
+    <img src="assets/screenshots/settings-dark.PNG" width="240"/>
+    <img src="assets/screenshots/timer-light.PNG" width="240"/>
+    <img src="assets/screenshots/settings-light.PNG" width="240"/>
+  </p>
+</div>
 
 ---
 
@@ -79,21 +75,25 @@ Have a suggestion or idea? Reach out and I may implement it in future updates!
 
 ## 📄 License
 
-### MIT License
+This project is licensed under the **MIT License with attribution**.
 
-This project is licensed under the MIT License.  
-You are free to use, modify, and distribute with attribution.
+You are free to:
 
-> TL;DR: Do whatever you want, but don’t sue the author.
+- Use the code for personal or commercial projects
+- Modify, distribute, and remix as needed
+
+But you **must include attribution** to the original author:
+
+> 🔗 Credit: [u/Blood13Reaper](https://www.reddit.com/u/Blood13Reaper)
 
 ---
 
 ## 🙌 Acknowledgements
 
-- Inspired by personal sleep disruption needs
-- Special thanks to friends who helped test and give feedback
+- Inspired by many videos from peninsular studio(asian-bondage.com) and insex (thank you PD)
+- Special thanks to reddit and users from r/BDSMDIY who helped test and give feedback
 
 ---
 
-_Designed with ❤️ in Figma & hand-coded for iOS and Android_  
+_Designed with ❤️ in Figma & hand-coded in VS Code for iOS and Android_  
 🧪 Try it → [Audio Irritator](https://thilac13.github.io/Audio-Irritator/index.html)
