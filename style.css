@@ -24,6 +24,7 @@
 }
 
 body {
+  padding-top: env(safe-area-inset-top, 24px); /* fallback 24px */
   font-family: 'SF Pro', sans-serif;
   background-color: var(--tertiary-light);
   color: var(--text-color-light);

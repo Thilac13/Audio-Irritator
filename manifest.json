@@ -1,6 +1,6 @@
 {
-  "name": "Disruptor Timer",
-  "short_name": "Disruptor",
+  "name": "Audio Irritator",
+  "short_name": "Irritator",
   "description": "Ethical sleep disruption timer",
   "start_url": "./index.html",
   "display": "standalone",
