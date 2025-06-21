@@ -23,6 +23,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+
 body {
   padding-top: env(safe-area-inset-top, 24px); /* fallback 24px */
   font-family: 'SF Pro', sans-serif;
@@ -234,6 +244,7 @@ body.dark .icon-circle img {
   padding: 20px;
   overflow-y: auto;
   color: var(--text-color-light);
+  -webkit-overflow-scrolling: touch;
 }
 
 body.dark #settings-view {

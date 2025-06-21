@@ -463,3 +463,11 @@ setFaviconForTheme();
 
 // Optional: respond to theme change
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconForTheme);
+
+window.scrollTo(0, 0);
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 100);
+});
