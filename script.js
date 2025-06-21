@@ -21,6 +21,11 @@ const pickerDoneBtn = document.getElementById('picker-done');
 const volumeSlider = document.getElementById('volume-slider');
 const volumeLabel = document.getElementById('volume-label');
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+
+
 let isPlaying = false;
 let countdownInterval = null;
 let remainingSeconds = 0;
@@ -445,3 +450,16 @@ document.querySelectorAll('.step-down').forEach(button => {
   button.addEventListener('mouseleave', stopStepper);
   button.addEventListener('touchend', stopStepper);
 });
+
+function setFaviconForTheme() {
+  const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
+  link.rel = 'icon';
+  link.href = `assets/icons/favicon-32-${theme}.png`;
+  document.head.appendChild(link);
+}
+
+setFaviconForTheme();
+
+// Optional: respond to theme change
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setFaviconForTheme);
